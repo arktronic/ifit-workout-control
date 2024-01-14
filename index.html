@@ -104,7 +104,7 @@
         return;
       }
 
-      const totalChunks = Math.round(totalTime / 1.5);
+      const totalChunks = Math.floor(totalTime / 1.5);
       const warmupChunks = (totalChunks < 8 ? 2 : 3);
       const cooldownChunks = (totalChunks < 8 ? 2 : 3);
       const mainChunks = totalChunks - warmupChunks - cooldownChunks;
@@ -211,6 +211,27 @@
         globalWorkoutInclines.push({x: time, y: currentIncline});
       }
 
+      // Generate the cooldown
+      currentSpeed = globalWorkoutSpeeds[globalWorkoutSpeeds.length - 1].y;
+      const maxCooldownSpeed = Math.min(3.5, currentSpeed);
+      currentSpeed = maxCooldownSpeed;
+      currentIncline = 1.5;
+      for (let i = 0; i < cooldownChunks; i++) {
+        const time = globalWorkoutSpeeds.length * 1.5;
+        globalWorkoutSpeeds.push({x: time, y: currentSpeed});
+        globalWorkoutInclines.push({x: time, y: currentIncline});
+        currentSpeed -= rng2Halves(0.5, 1.1);
+        if (currentSpeed < 1) currentSpeed = 1;
+      }
+
+      // Extend cooldown to the end of allotted time
+      currentSpeed = globalWorkoutSpeeds[globalWorkoutSpeeds.length - 1].y;
+      currentIncline = 1.5;
+      if (globalWorkoutSpeeds[globalWorkoutSpeeds.length - 1].x < totalTime) {
+        globalWorkoutSpeeds.push({x: totalTime, y: currentSpeed});
+        globalWorkoutInclines.push({x: totalTime, y: currentIncline});
+      }
+
       showWorkoutChart(seed);
     }
 
@@ -225,12 +246,17 @@
             {
               label: 'Speed',
               data: globalWorkoutSpeeds,
-              borderWidth: 1
+              borderWidth: 3,
+              pointRadius: 0,
+              stepped: 'before',
             },
             {
               label: 'Incline',
               data: globalWorkoutInclines,
-              borderWidth: 1
+              borderWidth: 1,
+              pointRadius: 0,
+              stepped: 'before',
+              fill: 'origin',
             },
           ]
         },
