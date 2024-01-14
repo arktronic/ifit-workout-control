@@ -97,8 +97,6 @@
       const hills = document.getElementById('confWorkoutHills').checked;
       const seed = (Number.isNaN(Number.parseInt(document.getElementById('confWorkoutSeed').value)) ? Math.round(Math.random() * 10000) : Number.parseInt(document.getElementById('confWorkoutSeed').value));
 
-      console.log('time', totalTime, 'max speed', maxSpeed, 'max incline', maxIncline, 'aggressive', aggressive, 'hills', hills, 'seed', seed);
-
       if (totalTime <= 0 || maxSpeed <= 0 || maxIncline < 0) {
         alert('ERROR: Time, speed, and incline must all be non-negative numbers.');
         return;
@@ -108,8 +106,6 @@
       const warmupChunks = (totalChunks < 8 ? 2 : 3);
       const cooldownChunks = (totalChunks < 8 ? 2 : 3);
       const mainChunks = totalChunks - warmupChunks - cooldownChunks;
-
-      console.log('total chunks', totalChunks, 'warmup', warmupChunks, 'cooldown', cooldownChunks, 'main', mainChunks);
 
       if (mainChunks < 2) {
         alert('ERROR: the specified time is too short. Please increase it.');
@@ -142,7 +138,6 @@
         currentSpeed = globalWorkoutSpeeds[globalWorkoutSpeeds.length - 1].y;
         const chunkMinSpeed = Math.min(currentSpeed, maxSpeed, 3);
         const chunkMaxSpeed = Math.min(currentSpeed + 2, maxSpeed);
-        console.log('current speed', currentSpeed, 'chunk min speed', chunkMinSpeed, 'chunk max speed', chunkMaxSpeed);
         const wasTrendUp = (globalWorkoutSpeeds[globalWorkoutSpeeds.length - 2].y < currentSpeed);
         const wasTrendDown = (globalWorkoutSpeeds[globalWorkoutSpeeds.length - 2].y > currentSpeed);
         const wasTrendLongNeutral = (globalWorkoutSpeeds.length > 4 && currentSpeed == globalWorkoutSpeeds[globalWorkoutSpeeds.length - 2].y && currentSpeed == globalWorkoutSpeeds[globalWorkoutSpeeds.length - 3].y && currentSpeed == globalWorkoutSpeeds[globalWorkoutSpeeds.length - 4].y);
@@ -287,6 +282,16 @@
         }
       });
     }
+
+    function createInstantWorkout(totalTime, maxSpeed, maxIncline, aggressive, hills) {
+      document.getElementById('confWorkoutTime').value = totalTime;
+      document.getElementById('confWorkoutMaxSpeed').value = maxSpeed;
+      document.getElementById('confWorkoutMaxIncline').value = maxIncline;
+      document.getElementById('confWorkoutAggressiveRamp').checked = aggressive;
+      document.getElementById('confWorkoutHills').checked = hills;
+      document.getElementById('confWorkoutSeed').value = '';
+      generateWorkout();
+    }
   </script>
 </head>
 
@@ -332,14 +337,14 @@
           <div class="card">
             <h5 class="card-header">Instant Workouts</h5>
             <div class="card-body d-flex justify-content-evenly flex-wrap">
-              <button class="btn btn-primary m-2">Easy 20m</button>
-              <button class="btn btn-primary m-2">Easy 30m</button>
-              <button class="btn btn-primary m-2">Easy 45m</button>
-              <button class="btn btn-primary m-2">Med 20m</button>
-              <button class="btn btn-primary m-2">Med 30m</button>
-              <button class="btn btn-primary m-2">Med 45m</button>
-              <button class="btn btn-primary m-2">Hard 25m</button>
-              <button class="btn btn-primary m-2">Hard 35m</button>
+              <button class="btn btn-primary m-2" onclick="createInstantWorkout(20, 4.5, 2, false, false)">Easy 20m</button>
+              <button class="btn btn-primary m-2" onclick="createInstantWorkout(30, 4.5, 2, false, false)">Easy 30m</button>
+              <button class="btn btn-primary m-2" onclick="createInstantWorkout(45, 4.5, 2, false, false)">Easy 45m</button>
+              <button class="btn btn-primary m-2" onclick="createInstantWorkout(20, 5, 6, true, false)">Med 20m</button>
+              <button class="btn btn-primary m-2" onclick="createInstantWorkout(30, 5, 6, true, false)">Med 30m</button>
+              <button class="btn btn-primary m-2" onclick="createInstantWorkout(45, 5, 6, true, false)">Med 45m</button>
+              <button class="btn btn-primary m-2" onclick="createInstantWorkout(25, 7, 8, true, true)">Hard 25m</button>
+              <button class="btn btn-primary m-2" onclick="createInstantWorkout(35, 7, 8, true, true)">Hard 35m</button>
             </div>
           </div>
         </div>
